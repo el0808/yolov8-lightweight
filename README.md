@@ -2,7 +2,7 @@
 # 文件概览
 
 该项目实现了一个改进的 YOLOv8 模型，将骨干网络替换成了 MobileNetV4-Small ，并且加入了SE注意力机制。  
-制作者：黄汉麟  
+制作者：HUANG Hanlin  
 特别鸣谢：https://github.com/jaiwei98/MobileNetV4-pytorch
 
 
