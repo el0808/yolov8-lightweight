@@ -1,0 +1,16 @@
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+
+# YOLOv8 classification model with MobileNetV4 and SE attention
+# CIFAR-10 uses 10 classes.
+nc: 10
+
+backbone:
+  # MobileNetV4ConvSmall returns four feature maps.
+  - [-1, 1, MobileNetV4ConvSmall, []]
+  # Select the final 128-channel feature map (1/16 resolution).
+  - [-1, 1, Index, [128, 3]]
+  # SEAttention receives the input channel count from the previous layer.
+  - [-1, 1, SEAttention, [16]]
+
+head:
+  - [-1, 1, Classify, [nc]]

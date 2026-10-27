@@ -62,3 +62,13 @@ backbone:
 本项目基于 [Ultralytics](https://github.com/ultralytics/ultralytics)，遵循其 AGPL-3.0 许可证。请在再分发和商业使用前阅读上游许可证及相关条款。
 
 MobileNetV4 和 SE 模块的集成代码位于 `ultralytics/nn/modules/`，解析器注册逻辑位于 `ultralytics/nn/tasks.py`。
+
+## CIFAR-10 分类训练
+
+仓库提供了使用 MobileNetV4 和 SEAttention 的 CIFAR-10 分类配置：
+
+```bash
+python main.py
+```
+
+`main.py` 会加载 `yolov8-mbv4-se-cls.yaml`，并调用 `model.train(data="cifar10")`。首次运行时，Ultralytics 会尝试准备 CIFAR-10 数据集；如果当前版本的资源中没有自动下载包，也可以先将 CIFAR-10 整理为 `train/<类别>/图片` 和 `test/<类别>/图片` 的目录结构，再把 `data` 改为该目录路径。
