@@ -1,19 +1,64 @@
+# YOLOv8 Lightweight
 
-# 文件概览
+基于 Ultralytics YOLO 的轻量化目标检测代码库，集成了 MobileNetV4 主干网络和 SE（Squeeze-and-Excitation）注意力模块，便于在资源受限设备上进行实验与部署。
 
-该项目实现了一个改进的 YOLOv8 模型，将骨干网络替换成了 MobileNetV4-Small ，并且加入了SE注意力机制。  
-制作者：HUANG Hanlin  
-特别鸣谢：https://github.com/jaiwei98/MobileNetV4-pytorch
+## 主要改动
 
+- 集成 MobileNetV4 卷积型和混合型主干：
+  - `MobileNetV4ConvSmall`
+  - `MobileNetV4ConvMedium`
+  - `MobileNetV4ConvLarge`
+  - `MobileNetV4HybridMedium`
+  - `MobileNetV4HybridLarge`
+- 集成 `SEAttention` 通道注意力模块。
+- 在 Ultralytics 模型解析流程中注册上述模块，可直接在模型 YAML 中使用。
+- 保留 Ultralytics 8.4.23 的训练、验证、预测、跟踪和导出能力。
 
-## 使用方法
+## 目录结构
 
-1.安装 ultralytics 库  
-2.打开以下目录 "C:\Users\你的用户名\anaconda3\Lib\site-packages\ultralytics"  
-3.将本项目中 ultralytics 文件夹内容复制进去，选择替换。  
-4.将 YOLO 标准格式数据集放入 dataset 文件夹。  
-5.修改 dataset.yaml 的 nc 和 names 。  
-6.运行数据增强程序 enhance.py，输出数据集在 augmented 文件夹中。  
-7.打开 main.py ，根据自己的数据集大小和需求设置训练参数，然后运行。  
-8.训练的结果保存在 runs/detect 文件夹下。  
-9.运行 test.py ,评估模型在 test 集的性能。
+```text
+ultralytics/
+├── cfg/                 # 训练和模型配置
+├── data/                # 数据集处理
+├── engine/              # 训练、验证和预测引擎
+├── models/              # YOLO、RT-DETR 等模型实现
+├── nn/
+│   ├── modules/
+│   │   ├── MobileNetV4.py
+│   │   └── SE.py
+│   └── tasks.py         # 模块注册和模型解析
+├── trackers/            # 多目标跟踪
+└── utils/               # 通用工具
+```
+
+## 安装依赖
+
+建议使用 Python 3.11，并按硬件环境安装 PyTorch。基础依赖包括：
+
+```bash
+pip install torch torchvision ultralytics-thop numpy opencv-python pillow matplotlib polars psutil pyyaml requests scipy
+```
+
+在本仓库根目录运行时，Python 会优先加载当前目录下的 `ultralytics` 包：
+
+```bash
+python -c "import ultralytics; print(ultralytics.__version__)"
+```
+
+## 使用自定义模块
+
+在模型 YAML 中将模块名称写入网络结构，即可由 Ultralytics 解析器创建。例如：
+
+```yaml
+backbone:
+  - [-1, 1, MobileNetV4ConvSmall, []]
+  - [-1, 1, SEAttention, [16]]
+```
+
+具体层数、通道数和 `reduction` 参数应根据输入尺寸及任务进行调整。
+
+## 许可证与致谢
+
+本项目基于 [Ultralytics](https://github.com/ultralytics/ultralytics)，遵循其 AGPL-3.0 许可证。请在再分发和商业使用前阅读上游许可证及相关条款。
+
+MobileNetV4 和 SE 模块的集成代码位于 `ultralytics/nn/modules/`，解析器注册逻辑位于 `ultralytics/nn/tasks.py`。
